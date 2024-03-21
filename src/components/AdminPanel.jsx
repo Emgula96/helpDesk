@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase/supabaseClient';
-import { useAuth } from '../ContextLayers/AuthContext';
 
 function AdminPanel() {
     const [tickets, setTickets] = useState([]);
@@ -45,65 +44,76 @@ function AdminPanel() {
         }
     };
 
-const handleChangeStatus = async () => {
-    if (!selectedTicket || !newStatus) return;
+    const handleChangeStatus = async () => {
+        if (!selectedTicket || !newStatus) return;
 
-    try {
-        const { data, error } = await supabase
-            .from('tickets')
-            .update({ status: newStatus })
-            .eq('id', selectedTicket.id);
+        try {
+            const { data, error } = await supabase
+                .from('tickets')
+                .update({ status: newStatus })
+                .eq('id', selectedTicket.id);
 
-        if (error) {
-            console.error('Error updating ticket:', error.message);
-        } else {
-            console.log('Status updated successfully!');
-            setTickets(prevTickets =>
-                prevTickets?.map(ticket =>
-                    ticket.id === selectedTicket.id ? { ...ticket, status: newStatus } : ticket
-                )
-            );
-        }
-    } catch (error) {
-        console.error('Error updating ticket:', error.message);
-    }
-    setSelectedTicket(null);
-};
-
-
-const handleResponseSubmit = async () => {
-    if (!selectedTicket || !responseText) return;
-
-    try {
-        const { data, error } = await supabase
-            .from('responses')
-            .insert([{ ticket_id: selectedTicket.id, message: responseText }]);
-
-        if (error) {
-            console.error('Error adding response:', error.message);
-        } else {
-            console.log('Response added successfully!');
-        await supabase
-        .from('tickets')
-        .update({ response_count: supabase.sql('response_count + 1') })
-        .eq('id', selectedTicket.id);
-            const { data: responseData, error: responseError } = await supabase
-                .from('responses')
-                .select('name, message')
-                .eq('ticket_id', selectedTicket.id);
-            if (responseError) {
-                console.error('Error fetching responses:', responseError.message);
+            if (error) {
+                console.error('Error updating ticket:', error.message);
             } else {
-                setTicketResponses(responseData);
+                console.log('Status updated successfully!');
+                setTickets(prevTickets =>
+                    prevTickets?.map(ticket =>
+                        ticket.id === selectedTicket.id ? { ...ticket, status: newStatus } : ticket
+                    )
+                );
             }
+        } catch (error) {
+            console.error('Error updating ticket:', error.message);
         }
-    } catch (error) {
-        console.error('Error adding response:', error.message);
-    }
-    setResponseText('');
-    setSelectedTicket(null)
-};
+        setSelectedTicket(null);
+    };
 
+    const handleResponseSubmit = async () => {
+        if (!selectedTicket || !responseText) return;
+
+        try {
+            const { data, error } = await supabase
+                .from('responses')
+                .insert([{ ticket_id: selectedTicket.id, message: responseText }]);
+
+            if (error) {
+                console.error('Error adding response:', error.message);
+            } else {
+                console.log('Response added successfully!');
+                await supabase
+                    .from('tickets')
+                    .update({ response_count: supabase.sql('response_count + 1') })
+                    .eq('id', selectedTicket.id);
+                const { data: responseData, error: responseError } = await supabase
+                    .from('responses')
+                    .select('name, message')
+                    .eq('ticket_id', selectedTicket.id);
+                if (responseError) {
+                    console.error('Error fetching responses:', responseError.message);
+                } else {
+                    setTicketResponses(responseData);
+                }
+            }
+        } catch (error) {
+            console.error('Error adding response:', error.message);
+        }
+        setResponseText('');
+        setSelectedTicket(null)
+    };
+
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'New':
+                return 'bg-red-500';
+            case 'In Progress':
+                return 'bg-yellow-500';
+            case 'Resolved':
+                return 'bg-green-500';
+            default:
+                return '';
+        }
+    };
 
     return (
         <div className="max-w-5xl mx-auto px-4 py-8">
@@ -124,7 +134,7 @@ const handleResponseSubmit = async () => {
                             <td className="border px-4 py-2">{ticket.id}</td>
                             <td className="border px-4 py-2">{ticket.email}</td>
                             <td className="border px-4 py-2">{ticket.description}</td>
-                            <td className="border px-4 py-2">{ticket.status}</td>
+                            <td className={`border px-4 py-2 ${getStatusColor(ticket.status)}`}>{ticket.status}</td>
                             <td className="border px-4 py-2">{ticket.response_count > 0 ? ticket.response_count : 0}</td>
                         </tr>
                     ))}
@@ -141,9 +151,9 @@ const handleResponseSubmit = async () => {
                     <label className="block mt-4"><strong>New Status:</strong></label>
                     <select value={newStatus} onChange={(e) => setNewStatus(e.target.value)} className="border border-gray-300 rounded-md p-2">
                         <option value="">Select Status</option>
-                        <option value="New">New</option>
-                        <option value="In Progress">In Progress</option>
-                        <option value="Resolved">Resolved</option>
+                        <option className='text-red-500' value="New">New</option>
+                        <option className='text-yellow-500' value="In Progress">In Progress</option>
+                        <option className='text-green-500' value="Resolved" >Resolved</option>
                     </select>
                     <button onClick={handleChangeStatus} className="ml-2 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Update Status</button>
 
@@ -176,3 +186,4 @@ const handleResponseSubmit = async () => {
 }
 
 export default AdminPanel;
+
