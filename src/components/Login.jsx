@@ -1,41 +1,40 @@
 import { useState } from 'react';
-import PropTypes from 'prop-types';
 import { supabase } from '../supabase/supabaseClient';
 import { useAuth } from '../ContextLayers/AuthContext';
 import { Navigate } from 'react-router-dom';
 
 function Login() {
-    const { setUser } = useAuth(); 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const { user } = useAuth()
+    const { user, setUser, isAdmin } = useAuth() 
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState(null)
 
     const handleLogin = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
+        e.preventDefault()
+        setLoading(true)
+        setError(null)
         try {
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: email,
                 password: password,
-            });
+            })
             if (error) {
-                setError(error.message);
+                setError(error.message)
             } else {
-                console.log(data);
-                setUser(data.user);
+                setUser(data.user)
             }
         } catch (error) {
-            setError(error.message);
+            setError(error.message)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
 
-    if (user) {
-        return <Navigate to="/ticketform" />;
+    if (isAdmin) {
+        return <Navigate to="/admin" />
+    } else if (user && isAdmin === false) {
+        return <Navigate to="/ticketform" />
     }
 
     return (
@@ -68,7 +67,7 @@ function Login() {
                 </button>
             </form>
         </div>
-    );
+    )
 }
 
-export default Login;
+export default Login

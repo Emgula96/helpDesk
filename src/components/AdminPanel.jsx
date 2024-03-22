@@ -4,106 +4,108 @@ import { useAuth } from '../ContextLayers/AuthContext';
 import { getStatusColor } from '../utils/getStatusColor';
 
 function AdminPanel() {
-    const [tickets, setTickets] = useState([]);
-    const [selectedTicket, setSelectedTicket] = useState(null);
-    const [newStatus, setNewStatus] = useState('');
-    const [responseText, setResponseText] = useState('');
-    const [ticketResponses, setTicketResponses] = useState([]);
+    const [tickets, setTickets] = useState([])
+    const [selectedTicket, setSelectedTicket] = useState(null)
+    const [newStatus, setNewStatus] = useState('')
+    const [responseText, setResponseText] = useState('')
+    const [ticketResponses, setTicketResponses] = useState([])
     const { user } = useAuth()
     
     useEffect(() => {
         async function fetchTickets() {
-            const { data, error } = await supabase.from('tickets').select('*');
+            const { data, error } = await supabase.from('tickets').select('*')
             if (error) {
-                console.error('Error fetching tickets:', error.message);
+                console.error('Error fetching tickets:', error.message)
             } else {
-                setTickets(data);
+                setTickets(data)
             }
         }
             
-        fetchTickets();
-    }, []);
+        fetchTickets()
+    }, [])
 
     const handleTicketClick = async (ticket) => {
         if (selectedTicket && selectedTicket.id === ticket.id) {
-            setSelectedTicket(null); 
-            setNewStatus(''); 
+            setSelectedTicket(null) 
+            setNewStatus('') 
         } else {
-            setSelectedTicket(ticket);
-            setNewStatus(''); 
+            setSelectedTicket(ticket)
+            setNewStatus('') 
         }
         try {
             const { data, error } = await supabase
                 .from('responses')
                 .select('name, message')
-                .eq('ticket_id', ticket.id);
+                .eq('ticket_id', ticket.id)
             if (error) {
-                console.error('Error fetching responses:', error.message);
+                console.error('Error fetching responses:', error.message)
             } else {
-                setTicketResponses(data);
+                setTicketResponses(data)
             }
         } catch (error) {
-            console.error('Error fetching responses:', error.message);
+            console.error('Error fetching responses:', error.message)
         }
-    };
+    }
 
     const handleChangeStatus = async () => {
-        if (!selectedTicket || !newStatus) return;
+        if (!selectedTicket || !newStatus) return
 
         try {
             const { data, error } = await supabase
                 .from('tickets')
                 .update({ status: newStatus })
-                .eq('id', selectedTicket.id);
+                .eq('id', selectedTicket.id)
 
             if (error) {
-                console.error('Error updating ticket:', error.message);
+                console.error('Error updating ticket:', error.message)
             } else {
-                console.log('Status updated successfully!');
+                console.log('Status updated successfully!')
                 setTickets(prevTickets =>
                     prevTickets?.map(ticket =>
                         ticket.id === selectedTicket.id ? { ...ticket, status: newStatus } : ticket
                     )
-                );
+                )
             }
         } catch (error) {
-            console.error('Error updating ticket:', error.message);
+            console.error('Error updating ticket:', error.message)
         }
-        setSelectedTicket(null);
-    };
+        setSelectedTicket(null)
+    }
 
     const handleResponseSubmit = async () => {
-        if (!selectedTicket || !responseText) return;
+    if (!selectedTicket || !responseText) return
 
-        try {
-            const { data, error } = await supabase
+    try {
+        const { data, error } = await supabase
+            .from('responses')
+            .insert([{ ticket_id: selectedTicket.id, message: responseText, name: user.email }])
+
+        if (error) {
+            console.error('Error adding response:', error.message)
+        } else {
+            console.log('Response added successfully!')
+            const updatedTickets = tickets.map(ticket =>
+                ticket.id === selectedTicket.id ? { ...ticket, response_count: (ticket.response_count || 0) + 1 } : ticket
+            )
+            setTickets(updatedTickets)
+
+            const { data: responseData, error: responseError } = await supabase
                 .from('responses')
-                .insert([{ ticket_id: selectedTicket.id, message: responseText, name: user.email }]);
-
-            if (error) {
-                console.error('Error adding response:', error.message);
+                .select('name, message')
+                .eq('ticket_id', selectedTicket.id)
+            if (responseError) {
+                console.error('Error fetching responses:', responseError.message)
             } else {
-                console.log('Response added successfully!');
-                await supabase
-                    .from('tickets')
-                    .update({ response_count: supabase.sql('response_count + 1') })
-                    .eq('id', selectedTicket.id);
-                const { data: responseData, error: responseError } = await supabase
-                    .from('responses')
-                    .select('name, message')
-                    .eq('ticket_id', selectedTicket.id);
-                if (responseError) {
-                    console.error('Error fetching responses:', responseError.message);
-                } else {
-                    setTicketResponses(responseData);
-                }
+                setTicketResponses(responseData) 
             }
-        } catch (error) {
-            console.error('Error adding response:', error.message);
         }
-        setResponseText('');
-        setSelectedTicket(null)
-    };
+    } catch (error) {
+        console.error('Error adding response:', error.message)
+    }
+    setResponseText('')
+    setSelectedTicket(null)
+}
+
 
     return (
         <div className="max-w-5xl mx-auto px-4 py-8">
@@ -150,22 +152,22 @@ function AdminPanel() {
                     <div className="mt-4">
                         <h3 className="text-lg font-semibold mb-2">Responses</h3>
                         <ul>
-                            {ticketResponses?.map((response, index) => (
-                                <li key={index}>
-                                    <p><strong>Name:</strong> {response.name}</p>
-                                    <p><strong>Message:</strong> {response.message}</p>
-                                </li>
-                            ))}
+                        {ticketResponses.map((response, index) => (
+                        <li key={index}>
+                            <p ><span className='font-bold'>{response.name}</span> : {response.message}</p>
+                        </li>
+                    ))}
                         </ul>
                     </div>
 
                     <div className="mt-4">
-                        <input 
-                            type="text" 
+                        <textarea
+                            rows={2}                
+                            type="textbox" 
                             value={responseText} 
                             onChange={(e) => setResponseText(e.target.value)} 
-                            placeholder="Enter response" 
-                            className="border border-gray-300 rounded-md p-2 mr-2" 
+                            placeholder="Enter your comment" 
+                            className="border border-gray-300 rounded-md p-2 w-full"
                         />
                         <button onClick={handleResponseSubmit} className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Submit</button>
                     </div>

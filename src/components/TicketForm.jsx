@@ -2,22 +2,22 @@ import { useState } from 'react';
 import { supabase } from '../supabase/supabaseClient';
 
 function TicketForm() {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [description, setDescription] = useState('');
+    const [name, setName] = useState('')
+    const [email, setEmail] = useState('')
+    const [description, setDescription] = useState('')
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault()
         try {
-            await supabase.from('tickets').insert([{ name, email, description }]);
-            alert('Ticket submitted successfully!');
-            setName('');
-            setEmail('');
-            setDescription('');
+            await supabase.from('tickets').insert([{ name, email, description }])
+            alert('Ticket submitted successfully!')
+            setName('')
+            setEmail('')
+            setDescription('')
         } catch (error) {
-            console.error('Error submitting ticket:', error.message);
+            console.error('Error submitting ticket:', error.message)
         }
-    };
+    }
 
     return (
         <div className="max-w-lg mx-auto mt-8">
@@ -29,7 +29,7 @@ function TicketForm() {
                 <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Submit Ticket</button>
             </form>
         </div>
-    );
+    )
 }
 
-export default TicketForm;
+export default TicketForm

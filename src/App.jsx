@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import MainPage from './components/TicketForm';
 import AdminPanel from './components/AdminPanel';
 import Login from './components/Login';
+import MyTickets from './components/MyTickets';
 import { AuthProvider } from './ContextLayers/AuthContext';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
                         <Route path="/ticketform" element={<MainPage />} />
                         <Route path="/admin" element={<AdminPanel />} />
                         <Route path="/login" element={<Login />} />
+                        <Route path="/mytickets" element={<MyTickets/>} />
                     </Routes>
                 </BrowserRouter>
             </div>
