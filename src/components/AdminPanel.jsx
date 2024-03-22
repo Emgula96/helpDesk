@@ -48,8 +48,6 @@ function AdminPanel() {
     }
 
     const handleChangeStatus = async () => {
-        if (!selectedTicket || !newStatus) return
-
         try {
             const { data, error } = await supabase
                 .from('tickets')
@@ -73,8 +71,6 @@ function AdminPanel() {
     }
 
     const handleResponseSubmit = async () => {
-    if (!selectedTicket || !responseText) return
-
     try {
         const { data, error } = await supabase
             .from('responses')
@@ -168,6 +164,7 @@ function AdminPanel() {
                             onChange={(e) => setResponseText(e.target.value)} 
                             placeholder="Enter your comment" 
                             className="border border-gray-300 rounded-md p-2 w-full"
+                            required
                         />
                         <button onClick={handleResponseSubmit} className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">Submit</button>
                     </div>

@@ -70,7 +70,7 @@ function Navbar() {
                                 Ticket Form
                             </Link>
                             <Link to="/mytickets" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-300 mr-4">
-                                My Ticekts
+                                My Tickets
                             </Link>
                             <Link onClick={handleLogout} className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-300 ml-4" to="/login">
                                 Logout

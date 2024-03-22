@@ -27,7 +27,11 @@ function MyTickets() {
     }, [user])
 
     const handleTicketClick = async (ticket) => {
-        setSelectedTicket(ticket)
+            if (selectedTicket && selectedTicket.id === ticket.id) {
+            setSelectedTicket(null) 
+        } else {
+            setSelectedTicket(ticket)
+        }
         try {
             const { data, error } = await supabase
                 .from('responses')

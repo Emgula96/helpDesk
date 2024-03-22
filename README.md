@@ -27,6 +27,8 @@ Admin users can view all tickets, respond to them, and change their statuses.
 - **Route Protection**: Implement route protection to secure sensitive areas of the application.
 - **Improved API Management**: Enhance data fetching and API management for better performance.
 - **Enhanced Authorization Roles**: Implement more granular authorization roles to manage user access more effectively.
+- **Token Auth/Local sotrage**: Implement the ability to refresh or leave web page and remain logged in.
+
 
 ## Getting Started
 
