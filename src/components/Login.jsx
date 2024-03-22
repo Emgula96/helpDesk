@@ -10,7 +10,7 @@ function Login() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { user } = useAuth()
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -26,7 +26,6 @@ function Login() {
             } else {
                 console.log(data);
                 setUser(data.user);
-                setIsLoggedIn(true);
             }
         } catch (error) {
             setError(error.message);
@@ -35,7 +34,7 @@ function Login() {
         }
     };
 
-    if (isLoggedIn) {
+    if (user) {
         return <Navigate to="/ticketform" />;
     }
 
