@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase/supabaseClient';
+import { useAuth } from '../ContextLayers/AuthContext';
+import { getStatusColor } from '../utils/getStatusColor';
 
 function AdminPanel() {
     const [tickets, setTickets] = useState([]);
@@ -7,7 +9,8 @@ function AdminPanel() {
     const [newStatus, setNewStatus] = useState('');
     const [responseText, setResponseText] = useState('');
     const [ticketResponses, setTicketResponses] = useState([]);
-
+    const { user } = useAuth()
+    
     useEffect(() => {
         async function fetchTickets() {
             const { data, error } = await supabase.from('tickets').select('*');
@@ -75,7 +78,7 @@ function AdminPanel() {
         try {
             const { data, error } = await supabase
                 .from('responses')
-                .insert([{ ticket_id: selectedTicket.id, message: responseText }]);
+                .insert([{ ticket_id: selectedTicket.id, message: responseText, name: user.email }]);
 
             if (error) {
                 console.error('Error adding response:', error.message);
@@ -100,19 +103,6 @@ function AdminPanel() {
         }
         setResponseText('');
         setSelectedTicket(null)
-    };
-
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'New':
-                return 'bg-red-500';
-            case 'In Progress':
-                return 'bg-yellow-500';
-            case 'Resolved':
-                return 'bg-green-500';
-            default:
-                return '';
-        }
     };
 
     return (

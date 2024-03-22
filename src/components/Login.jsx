@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { supabase } from '../supabase/supabaseClient';
 import { useAuth } from '../ContextLayers/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 function Login() {
     const { setUser } = useAuth(); 
@@ -9,29 +10,34 @@ function Login() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
- const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-        const { user, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        });
-        if (error) {
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+            if (error) {
+                setError(error.message);
+            } else {
+                console.log(data);
+                setUser(data.user);
+                setIsLoggedIn(true);
+            }
+        } catch (error) {
             setError(error.message);
-        } else {
-            console.log(user);
-            setUser(user);
+        } finally {
+            setLoading(false);
         }
-    } catch (error) {
-        setError(error.message);
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
+    if (isLoggedIn) {
+        return <Navigate to="/ticketform" />;
+    }
 
     return (
         <div className="max-w-md mx-auto mt-8">

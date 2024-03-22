@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../ContextLayers/AuthContext';
 import { supabase } from '../supabase/supabaseClient';
+import { useState } from 'react';
 
 function Navbar() {
     const { user, setUser } = useAuth();
@@ -23,15 +24,21 @@ function Navbar() {
                     </div>
                     <div>
                         <div className="flex">
-                            <Link to="/" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-300 mr-4">
+                            <Link to="/ticketform" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-300 mr-4">
                                 Home
                             </Link>
                             <Link to="/admin" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-300">
                                 Admin Panel
                             </Link>
-                                <button onClick={handleLogout} className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-300 ml-4">
+                            {user ? (
+                                <Link onClick={handleLogout} className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-300 ml-4" to="/login">
                                     Logout
-                                </button>
+                                </Link>
+                            ) : (
+                                <Link to="/login" className="block mt-4 lg:inline-block lg:mt-0 text-white hover:text-gray-300 ml-4">
+                                    Login
+                                </Link>
+                            )}
                         </div>
                     </div>
                 </div>

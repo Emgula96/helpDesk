@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import MainPage from './components/MainPage';
+import MainPage from './components/TicketForm';
 import AdminPanel from './components/AdminPanel';
 import Login from './components/Login';
 import { AuthProvider } from './ContextLayers/AuthContext';
@@ -12,7 +12,8 @@ function App() {
                 <BrowserRouter>
                     <Navbar />
                     <Routes>
-                        <Route path="/" element={<MainPage />} />
+                        <Route path="/" element={<Login />} />
+                        <Route path="/ticketform" element={<MainPage />} />
                         <Route path="/admin" element={<AdminPanel />} />
                         <Route path="/login" element={<Login />} />
                     </Routes>

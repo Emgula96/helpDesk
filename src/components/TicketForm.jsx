@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../supabase/supabaseClient';
 
-function MainPage() {
+function TicketForm() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [description, setDescription] = useState('');
@@ -32,4 +32,4 @@ function MainPage() {
     );
 }
 
-export default MainPage;
+export default TicketForm;
