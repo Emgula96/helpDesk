@@ -45,4 +45,5 @@ Admin users can view all tickets, respond to them, and change their statuses.
 - HTML/CSS
 - Tailwind
 - vite
+- hosted on firebase
 
