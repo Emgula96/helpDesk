@@ -5,6 +5,8 @@ import AdminPanel from './components/AdminPanel';
 import Login from './components/Login';
 import MyTickets from './components/MyTickets';
 import { AuthProvider } from './ContextLayers/AuthContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
     return (
@@ -21,6 +23,7 @@ function App() {
                     </Routes>
                 </BrowserRouter>
             </div>
+        <ToastContainer />
         </AuthProvider>
     );
 }
