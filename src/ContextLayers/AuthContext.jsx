@@ -11,6 +11,29 @@ export const AuthProvider = ({ children }) => {
     const [userData, setUserData] = useState(null);
 
     useEffect(() => {
+        const fetchUserFromLocalStorage = async () => {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                const parsedUser = JSON.parse(storedUser);
+                setUser(parsedUser);
+            }
+        };
+
+        fetchUserFromLocalStorage();
+    }, []);
+
+    useEffect(() => {
+        const checkSession = async () => {
+            const { user: sessionUser, error } = await supabase.auth.getSession();
+            if (sessionUser) {
+                setUser(sessionUser);
+            }
+        };
+
+        checkSession();
+    }, []);
+
+    useEffect(() => {
         async function fetchData() {
             if (user) {
                 try {
@@ -45,6 +68,14 @@ export const AuthProvider = ({ children }) => {
         }
 
         fetchData();
+    }, [user]);
+
+    useEffect(() => {
+        if (user) {
+            localStorage.setItem('user', JSON.stringify(user));
+        } else {
+            localStorage.removeItem('user');
+        }
     }, [user]);
 
     return (
