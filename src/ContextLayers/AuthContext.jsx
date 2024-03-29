@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
         async function fetchData() {
             if (user) {
                 try {
-                    // Fetch user data from 'users' table
                     const { data: userData, error } = await supabase
                         .from('users')
                         .select('*')
@@ -27,8 +26,6 @@ export const AuthProvider = ({ children }) => {
                     } else {
                         setUserData(userData);
                     }
-
-                    // Check if the user is an admin
                     const { data: adminData, error: adminError } = await supabase
                         .from('users')
                         .select('admin')

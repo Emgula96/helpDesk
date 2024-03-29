@@ -4,11 +4,17 @@ export const handleInputChange = (e, setResponseText) => {
    setResponseText(e.target.value);
 };
 
-export const handleTicketClick = async (ticket, selectedTicket, setSelectedTicket, setTicketResponses) => {
+export const handleTicketClick = async (ticket, selectedTicket, setSelectedTicket, setTicketResponses, isAdmin, setNewStatus) => {
     if (selectedTicket && selectedTicket.id === ticket.id) {
         setSelectedTicket(null);
+        if (isAdmin) {
+            setNewStatus('')
+        }
     } else {
         setSelectedTicket(ticket);
+        if (isAdmin) {
+            setNewStatus('')
+        }
         try {
             const { data, error } = await supabase
                 .from('responses')
@@ -56,3 +62,26 @@ export const handleResponseSubmit = async (selectedTicket, responseText, setResp
     setResponseText('');
 };
 
+
+export const handleChangeStatus = async (selectedTicket, newStatus, setSelectedTicket, setTickets ) => {
+        try {
+            const { data, error } = await supabase
+                .from('tickets')
+                .update({ status: newStatus })
+                .eq('id', selectedTicket.id)
+
+            if (error) {
+                console.error('Error updating ticket:', error.message)
+            } else {
+                console.log('Status updated successfully!')
+                setTickets(prevTickets =>
+                    prevTickets?.map(ticket =>
+                        ticket.id === selectedTicket.id ? { ...ticket, status: newStatus } : ticket
+                    )
+                )
+            }
+        } catch (error) {
+            console.error('Error updating ticket:', error.message)
+        }
+        setSelectedTicket(null)
+    }
