@@ -35,10 +35,10 @@ const Ticket = ({ ticket, tickets, selectedTicket, setSelectedTicket, ticketResp
                 />
             )}
             <button
-                className="mt-2 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 w-full md:w-auto"
+                className="mt-2 bg-gray-200 text-gray-800 py-1 px-3 rounded-md hover:bg-gray-300 w-full md:w-auto text-sm"
                 onClick={() => handleTicketClick(ticket, selectedTicket, setSelectedTicket, setTicketResponses, isAdmin, setNewStatus)}
             >
-                View Details
+                {selectedTicket && selectedTicket.id === ticket.id ? 'Hide Details' : 'View Details'}
             </button>
         </div>
     );

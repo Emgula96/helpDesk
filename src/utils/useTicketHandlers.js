@@ -1,7 +1,7 @@
 import { supabase } from '../supabase/supabaseClient';
 
 export const handleInputChange = (e, setResponseText) => {
-   setResponseText(e.target.value);
+    setResponseText(e.target.value);
 };
 
 export const handleTicketClick = async (ticket, selectedTicket, setSelectedTicket, setTicketResponses, isAdmin, setNewStatus) => {

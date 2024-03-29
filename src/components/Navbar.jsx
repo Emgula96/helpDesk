@@ -13,7 +13,6 @@ function Navbar() {
             console.error('Error logging out:', error.message)
         }
     }
-    //essentially 3 navbars based on user role signIN, user, admin rather than ternarys
     if (!user) {
         return (
             <nav className="bg-blue-700 p-4">

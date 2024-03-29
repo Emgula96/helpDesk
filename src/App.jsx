@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import MainPage from './components/TicketForm';
+import MainPage from './Pages/TicketForm';
 import AdminPanel from './Pages/AdminPanel';
 import Login from './Pages/Login';
 import MyTickets from './Pages/MyTickets';

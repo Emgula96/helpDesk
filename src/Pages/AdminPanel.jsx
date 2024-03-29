@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase/supabaseClient';
-import { useAuth } from '../ContextLayers/AuthContext';
-import { getStatusColor } from '../utils/getStatusColor';
 import Ticket from '../components/Ticket';
 import { handleInputChange, handleResponseSubmit, handleTicketClick } from '../utils/useTicketHandlers';
 
@@ -10,7 +8,6 @@ function AdminPanel() {
     const [selectedTicket, setSelectedTicket] = useState(null)
     const [responseText, setResponseText] = useState('')
     const [ticketResponses, setTicketResponses] = useState([])
-    const { user} = useAuth()
     
     useEffect(() => {
         async function fetchTickets() {
@@ -28,7 +25,6 @@ function AdminPanel() {
 return (
     <div className="max-w-5xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-semibold mb-4">Admin Panel</h1>
-        
                 {tickets?.map(ticket => (
                     <Ticket
                         key={ticket.id}
