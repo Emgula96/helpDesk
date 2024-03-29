@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import MainPage from './components/TicketForm';
-import AdminPanel from './components/AdminPanel';
-import Login from './components/Login';
-import MyTickets from './components/MyTickets';
+import AdminPanel from './Pages/AdminPanel';
+import Login from './Pages/Login';
+import MyTickets from './Pages/MyTickets';
 import { AuthProvider } from './ContextLayers/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

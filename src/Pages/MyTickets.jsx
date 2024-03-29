@@ -10,23 +10,28 @@ function MyTickets() {
     const [responseText, setResponseText] = useState('');
     const [ticketResponses, setTicketResponses] = useState([]);
     const { user } = useAuth();
-
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5); 
     useEffect(() => {
-        async function fetchTickets() {
-            const { data, error } = await supabase
-                .from('tickets')
-                .select('*')
-                .eq('email', user.email);
-            if (error) {
-                console.error('Error fetching tickets:', error.message);
-            } else {
-                setTickets(data);
-            }
-        }
-            
         fetchTickets();
-    }, [user]);
+    }, [user, currentPage]);
 
+    const fetchTickets = async () => {
+        const offset = (currentPage - 1) * itemsPerPage;
+        const { data, error } = await supabase
+            .from('tickets')
+            .select('*')
+            .eq('email', user.email)
+            .range(offset, offset + itemsPerPage - 1);
+        if (error) {
+            console.error('Error fetching tickets:', error.message);
+        } else {
+            setTickets(data);
+        }
+    };
+
+    const totalPages = Math.ceil(tickets.length/itemsPerPage);
+    
     return (
         <div className="max-w-5xl mx-auto px-4 py-8">
             <h1 className="text-3xl font-semibold mb-4">My Tickets</h1>
@@ -48,6 +53,22 @@ function MyTickets() {
                         setResponseText={setResponseText}
                     />
                 ))}
+            </div>
+            <div className="mt-4">
+                <button
+                    onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : 1)}
+                    disabled={currentPage === 1}
+                    className="mr-2"
+                >
+                    Previous
+                </button>
+                <span>Page {currentPage} of {totalPages}</span>
+                <button
+                    onClick={() => setCurrentPage(currentPage + 1 )}
+                    className="ml-2"
+                >
+                    Next
+                </button>
             </div>
         </div>
     );
