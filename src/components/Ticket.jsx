@@ -10,13 +10,12 @@ const Ticket = ({ ticket, tickets, selectedTicket, setSelectedTicket, ticketResp
     return (
         <div key={ticket.id} className="mb-4 border border-gray-300 p-4 rounded-lg">
             <div className="flex justify-between items-center">
-                {isAdmin ? (
-                    <p>User: <span className="font-bold">{ticket.email}</span></p>
-                ) : (
-                    <React.Fragment>
-                        <h2 className="text-lg font-semibold">{ticket.description}</h2>
-                    </React.Fragment>
+                <div>
+                {isAdmin && (
+                    <p className="font-bold">{ticket.email}</p>
                 )}
+                <h2 className="text-sm"><span className='font-semibold'>Description: </span>{ticket.description}</h2>
+            </div>
                 <StatusBadge status={ticket.status} />
             </div>
             <div className="mt-2">

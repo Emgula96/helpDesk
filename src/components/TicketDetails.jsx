@@ -1,11 +1,9 @@
 import { useAuth } from "../ContextLayers/AuthContext";
 
-const TicketDetails = ({ selectedTicket, ticketResponses, responseText, handleResponseSubmit, handleInputChange, newStatus, setNewStatus, handleChangeStatus }) => {
+const TicketDetails = ({ ticketResponses, responseText, handleResponseSubmit, handleInputChange, newStatus, setNewStatus, handleChangeStatus }) => {
     const { isAdmin } = useAuth()  
     return (
         <div className="mt-4">
-            <h3 className="text-lg font-semibold mb-2">Ticket Details</h3>
-            <p><strong>Description:</strong> {selectedTicket.description}</p>
             {isAdmin && (
                 <div className="mt-4">
                 <label className="block"><strong>New Status:</strong></label>
