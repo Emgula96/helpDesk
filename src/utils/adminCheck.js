@@ -7,7 +7,6 @@ export async function checkAdmin() {
     if (!user) {
         return false
     }
-
     try {
         const { data, error } = await supabase
             .from('users')

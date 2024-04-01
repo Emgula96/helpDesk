@@ -1,4 +1,7 @@
 import { supabase } from '../supabase/supabaseClient';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export const handleInputChange = (e, setResponseText) => {
     setResponseText(e.target.value);
@@ -21,12 +24,12 @@ export const handleTicketClick = async (ticket, selectedTicket, setSelectedTicke
                 .select('name, message')
                 .eq('ticket_id', ticket.id);
             if (error) {
-                console.error('Error fetching responses:', error.message);
+                toast.error('Error fetching responses:', error.message);
             } else {
                 setTicketResponses(data);
             }
         } catch (error) {
-            console.error('Error fetching responses:', error.message);
+            toast.error('Error fetching responses:', error.message);
         }
     }
 };
@@ -39,9 +42,9 @@ export const handleResponseSubmit = async (selectedTicket, responseText, setResp
             .from('responses')
             .insert([{ ticket_id: selectedTicket.id, message: responseText, name: user.email }]);
         if (error) {
-            console.error('Error adding response:', error.message);
+            toast.error('Error adding response:', error.message);
         } else {
-            console.log('Response added successfully!');
+            toast.success('Response Added');
             const updatedTickets = tickets?.map(ticket =>
                 ticket.id === selectedTicket.id ? { ...ticket, response_count: (ticket.response_count || 0) + 1 } : ticket
             );
@@ -51,37 +54,40 @@ export const handleResponseSubmit = async (selectedTicket, responseText, setResp
                 .select('name, message')
                 .eq('ticket_id', selectedTicket.id);
             if (responseError) {
-                console.error('Error fetching responses:', responseError.message);
+                toast.error('Error fetching responses:', responseError.message);
             } else {
                 setTicketResponses(responseData);
             }
         }
     } catch (error) {
-        console.error('Error adding response:', error.message);
+        toast.error('Error adding response:', error.message);
     }
     setResponseText('');
 };
 
 
 export const handleChangeStatus = async (selectedTicket, newStatus, setSelectedTicket, setTickets ) => {
-        try {
-            const { data, error } = await supabase
-                .from('tickets')
-                .update({ status: newStatus })
-                .eq('id', selectedTicket.id)
-
-            if (error) {
-                console.error('Error updating ticket:', error.message)
-            } else {
-                console.log('Status updated successfully!')
-                setTickets(prevTickets =>
-                    prevTickets?.map(ticket =>
-                        ticket.id === selectedTicket.id ? { ...ticket, status: newStatus } : ticket
-                    )
-                )
-            }
-        } catch (error) {
-            console.error('Error updating ticket:', error.message)
-        }
-        setSelectedTicket(null)
+    if (!newStatus) {
+        toast.error('Please select a valid status');
+        return;
     }
+    try {
+        const { data, error } = await supabase
+            .from('tickets')
+            .update({ status: newStatus })
+            .eq('id', selectedTicket.id);
+        if (error) {
+            toast.error('Error updating ticket:', error.message)
+        } else {
+            toast.success('Ticket updated!');
+            setTickets(prevTickets =>
+                prevTickets?.map(ticket =>
+                    ticket.id === selectedTicket.id ? { ...ticket, status: newStatus } : ticket
+                )
+            )
+        }
+    } catch (error) {
+        toast.error('Error updating ticket:', error.message)
+    }
+    setSelectedTicket(null)
+}

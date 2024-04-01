@@ -3,6 +3,9 @@ import { supabase } from '../supabase/supabaseClient';
 import { useAuth } from '../ContextLayers/AuthContext';
 import Ticket from '../components/Ticket';
 import { handleInputChange, handleResponseSubmit, handleTicketClick } from '../utils/useTicketHandlers';
+import fetchTotalTicketsCount from '../utils/fetchTotalTicketsCount';
+import { fetchMyTickets } from '../utils/fetchMytickets';
+
 
 function MyTickets() {
     const [tickets, setTickets] = useState([]);
@@ -11,27 +14,19 @@ function MyTickets() {
     const [ticketResponses, setTicketResponses] = useState([]);
     const { user } = useAuth();
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(5); 
+    const [totalPages, setTotalPages] = useState(1);
+    const itemsPerPage = 5
+
     useEffect(() => {
-        fetchTickets();
+        async function fetchData() {
+            const totalCount = await fetchTotalTicketsCount(user, false)
+            setTotalPages(Math.ceil(totalCount / itemsPerPage))
+            const ticketData = await fetchMyTickets(user, currentPage, itemsPerPage);
+            setTickets(ticketData)
+        }
+        fetchData();
     }, [user, currentPage]);
 
-    const fetchTickets = async () => {
-        const offset = (currentPage - 1) * itemsPerPage;
-        const { data, error } = await supabase
-            .from('tickets')
-            .select('*')
-            .eq('email', user.email)
-            .range(offset, offset + itemsPerPage - 1);
-        if (error) {
-            console.error('Error fetching tickets:', error.message);
-        } else {
-            setTickets(data);
-        }
-    };
-
-    const totalPages = Math.ceil(tickets.length/itemsPerPage);
-    
     return (
         <div className="max-w-5xl mx-auto px-4 py-8">
             <h1 className="text-3xl font-semibold mb-4">My Tickets</h1>
@@ -64,8 +59,9 @@ function MyTickets() {
                 </button>
                 <span>Page {currentPage} of {totalPages}</span>
                 <button
-                    onClick={() => setCurrentPage(currentPage + 1 )}
+                    onClick={() => setCurrentPage(currentPage < totalPages ? currentPage + 1 : totalPages)}
                     className="ml-2"
+                    disabled={currentPage === totalPages}
                 >
                     Next
                 </button>
