@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../supabase/supabaseClient';
 import { useAuth } from '../ContextLayers/AuthContext';
 import Ticket from '../components/Ticket';
 import { handleInputChange, handleResponseSubmit, handleTicketClick } from '../utils/useTicketHandlers';
 import fetchTotalTicketsCount from '../utils/fetchTotalTicketsCount';
 import { fetchMyTickets } from '../utils/fetchMytickets';
+import PaginationNav from '../components/PaginationNav';
 
 
 function MyTickets() {
@@ -49,23 +49,7 @@ function MyTickets() {
                     />
                 ))}
             </div>
-            <div className="mt-4">
-                <button
-                    onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : 1)}
-                    disabled={currentPage === 1}
-                    className="mr-2"
-                >
-                    Previous
-                </button>
-                <span>Page {currentPage} of {totalPages}</span>
-                <button
-                    onClick={() => setCurrentPage(currentPage < totalPages ? currentPage + 1 : totalPages)}
-                    className="ml-2"
-                    disabled={currentPage === totalPages}
-                >
-                    Next
-                </button>
-            </div>
+            <PaginationNav currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
         </div>
     );
 }

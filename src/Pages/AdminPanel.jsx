@@ -4,6 +4,7 @@ import { handleInputChange, handleResponseSubmit, handleTicketClick } from '../u
 import fetchTotalTicketsCount from '../utils/fetchTotalTicketsCount';
 import { useAuth } from '../ContextLayers/AuthContext';
 import { fetchTickets } from '../utils/fetchAllTickets';
+import PaginationNav from '../components/PaginationNav';
 
 function AdminPanel() {
     const [tickets, setTickets] = useState([]);
@@ -45,23 +46,7 @@ function AdminPanel() {
                     setResponseText={setResponseText}
                 />
             ))}
-            <div className="mt-4">
-                <button
-                    onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : 1)}
-                    disabled={currentPage === 1}
-                    className="mr-2"
-                >
-                    Previous
-                </button>
-                <span>Page {currentPage} of {totalPages}</span>
-                <button
-                    onClick={() => setCurrentPage(currentPage < totalPages ? currentPage + 1 : totalPages)}
-                    className="ml-2"
-                    disabled={currentPage === totalPages}
-                >
-                    Next
-                </button>
-            </div>
+            <PaginationNav currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
         </div>
     );
 }
